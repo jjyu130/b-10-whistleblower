@@ -45,6 +45,7 @@
                 max-width: 500px; 
         }
     </style>
+    <title>Anonymous Home</title>
 </head>
 <body>
 
@@ -58,17 +59,9 @@
             <h1>Welcome!</h1>
         </div>
         <div class="dashboard-buttons d-flex justify-content-center">
-            <a class="btn btn-dark" href="{% url 'whistleblower:n-complaint' %}">Neighbor Report Form</a>
-            <a class="btn btn-dark" href="{% url 'whistleblower:b-complaint' %}">Building Report Form</a>
+            <a class="btn btn-dark" href="{% url 'whistleblower:n-a-complaint' %}">Neighbor Report Form</a>
+            <a class="btn btn-dark" href="{% url 'whistleblower:b-a-complaint' %}">Building Report Form</a>
         </div>
-    </div>
-
-    <div class="container form-container mt-5 pt-5">
-        <h5>Enter Building Code</h5>
-        <div class="mb-3">
-            <input type="text"/>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
     </div>
 </body>
 <div class=footer>

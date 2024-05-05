@@ -41,13 +41,38 @@
             justify-content: space-around; 
             margin-top: 2rem;
         }
-        .report-list {
+        .report-list, .groups-section{
             border: 2px solid #343a40; 
             padding: 1rem;
             border-radius: 0.25rem; 
             width: 48%; 
         }
+        .groups-section {
+            margin: 2rem auto; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .groups-list {
+            list-style: none; 
+            padding: 0;
+        }
+        .groups-list li {
+            padding: 10px;
+        }
+        .groups-list li:hover {
+            background-color: #f0f0f0; 
+            border-radius: 25px;
+        }
+        .groups-list a {
+            display: none; 
+        }
+        .groups-list li:hover a {
+            display: inline;
+        }
     </style>
+
     <Title>Home</Title>
 </head>
 <body>
@@ -65,7 +90,9 @@
             <a class="btn btn-dark" href="{% url 'whistleblower:n-complaint' %}">Neighbor Report Form</a>
             <a class="btn btn-dark" href="{% url 'whistleblower:b-complaint' %}">Building Report Form</a>
         </div>
-
+        <div class ="text-center">
+            {{ error_message }}
+        </div>
         <div class="reports-container">
             <div class="report-list">
                 <h2>Open Reports</h2>
@@ -96,14 +123,21 @@
                 </ul>
             </div>
         </div>
-        <h3>Groups</h3>
-        {% for group in groups %}
-        <ul>
-            <li>
-                {{group.name}} <a href="{% url 'whistleblower:leave_building_group' group.pk %}">Leave</a>
-            </li>
-        </ul>
-        {% endfor %}
+
+
+        <div class="groups-section">
+            <h3>Groups</h3>
+            {% for group in groups %}
+            <ul class="groups-list">
+                <li>
+                    {{group.name}} <a href="{% url 'whistleblower:leave_building_group' group.pk %}">Leave</a>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+
+
+
     </div>
     <div class=footer>
         {% include 'whistleblower/footer.html' %}

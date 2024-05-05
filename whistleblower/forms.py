@@ -1,6 +1,9 @@
 from django import forms
 
 from .models import Complaint
+from .models import BuildingGroup
+
+from django.utils import timezone
 
 N_COMPLAINT_CHOICES = (
     (1, "Noise Complaint"),
@@ -68,9 +71,119 @@ B_COMPLAINT_CHOICES = (
 class BComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
-        exclude = ["version", "complaint_status", "resolution_notes"]
+        exclude = ["complaint_status", "resolution_notes", "sent_date",
+                   "reporter_first_name", "reporter_last_name",
+                   "reporter_email", "reporter", "respondent_name"
+                   ]
 
+        widgets = {
+            'incident_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+    def __init__(self, user, *args, **kwargs):
+        super(BComplaintForm, self).__init__(*args, **kwargs)
+        self.fields['group'].queryset = BuildingGroup.objects.filter(users=user)
+        self.fields['group'].label_from_instance = lambda instance: instance.name
+    def clean_urgency(self):
+        data = self.cleaned_data["urgency"]
+        if data < 1 or data > 5:
+            raise forms.ValidationError("Please enter a value between 1 and 5")
+        return data
+    def clean_incident_date(self):
+        data = self.cleaned_data["incident_date"]
+        if data > timezone.now():
+            raise forms.ValidationError("Date cannot be in the future")
+        return data
+    
 class NComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
-        exclude = ["version", "complaint_status", "resolution_notes"]
+        exclude = ["complaint_status", "resolution_notes", "sent_date",
+                   "reporter_first_name", "reporter_last_name", "reporter_email", "reporter"
+                   ]
+        widgets = {
+            'incident_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        super(NComplaintForm, self).__init__(*args, **kwargs)
+        self.fields['group'].queryset = BuildingGroup.objects.filter(users=user)
+        self.fields['group'].label_from_instance = lambda instance: instance.name
+
+
+    def clean_urgency(self):
+        data = self.cleaned_data["urgency"]
+        if data < 1 or data > 5:
+            raise forms.ValidationError("Please enter a value between 1 and 5")
+        return data
+
+    def clean_incident_date(self):
+        data = self.cleaned_data["incident_date"]
+        if data > timezone.now():
+            raise forms.ValidationError("Date cannot be in the future")
+        return data
+
+class ANComplaintForm(forms.ModelForm):
+
+    groupField = forms.IntegerField(label="Building Code*", required=True)
+    class Meta:
+
+        model = Complaint
+        exclude = [
+            "complaint_status", "resolution_notes", "sent_date",
+            "reporter", "reporter_first_name", "reporter_last_name",
+            "reporter_email", "group"
+        ]
+
+        widgets = {
+            'incident_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+    def clean_groupField(self):
+        data = self.cleaned_data["groupField"]
+        if not BuildingGroup.objects.filter(id=data).exists():
+            raise forms.ValidationError("Building Code is not valid")
+        return data
+    def clean_urgency(self):
+        data = self.cleaned_data["urgency"]
+        if data < 1 or data > 5:
+            raise forms.ValidationError("Please enter a value between 1 and 5")
+        return data
+
+    def clean_incident_date(self):
+        data = self.cleaned_data["incident_date"]
+        if data > timezone.now():
+            raise forms.ValidationError("Date cannot be in the future")
+        return data
+
+class ABComplaintForm(forms.ModelForm):
+
+    groupField = forms.IntegerField(label="Building Code*", required=True)
+    class Meta:
+
+        model = Complaint
+        exclude = [
+            "complaint_status", "resolution_notes", "sent_date",
+            "reporter", "reporter_first_name", "reporter_last_name",
+            "reporter_email", "group", "respondent_name"
+        ]
+
+        widgets = {
+            'incident_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+    def clean_groupField(self):
+        data = self.cleaned_data["groupField"]
+        if not BuildingGroup.objects.filter(id=data).exists():
+            raise forms.ValidationError("Building Code is not valid")
+        return data
+    def clean_urgency(self):
+        data = self.cleaned_data["urgency"]
+        if data < 1 or data > 5:
+            raise forms.ValidationError("Please enter a value between 1 and 5")
+        return data
+
+    def clean_incident_date(self):
+        data = self.cleaned_data["incident_date"]
+        if data > timezone.now():
+            raise forms.ValidationError("Date cannot be in the future")
+        return data

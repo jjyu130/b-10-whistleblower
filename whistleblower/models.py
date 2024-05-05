@@ -27,35 +27,32 @@ class Complaint(models.Model):
         RESOLVED = 3, "Resolved"
 
     # All Personal Information is Optional
-    reporter = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    reporter = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     resolution_notes = models.TextField(max_length=500, null=True, blank=True)
     reporter_first_name = models.CharField(max_length=50, null=True, blank=True)
     reporter_last_name = models.CharField(max_length=50, null=True, blank=True)
-    reporter_phone_number = models.CharField(max_length=12, null=True, blank=True)
     reporter_email = models.CharField(max_length=50, null=True, blank=True)
-    reporter_description = models.TextField(max_length=400, null=True, blank=True)
     # All Personal Information is Optional
 
-    version = models.IntegerField(default=0)
-    complaint_title = models.CharField(max_length=200)
+    complaint_title = models.CharField(verbose_name="Title*", max_length=200)
     type_complaint = models.PositiveSmallIntegerField(
-        choices=ComplaintType.choices, default=ComplaintType.NOISE_COMPLAINT)
-    sent_date = models.DateTimeField("Date Sent")
-    incident_date = models.DateTimeField("Date of Incident")
-    respondent_name = models.CharField(max_length=50, null=True, blank= True)
-    respondent_location = models.TextField(max_length=200, null=True, blank=True)
-    location_address = models.CharField(max_length=50,)
-    location_description = models.TextField(max_length=500)
-    incident_description = models.TextField(max_length=500)
+        choices=ComplaintType.choices, default=ComplaintType.NOISE_COMPLAINT, verbose_name="Complaint Type*")
+    sent_date = models.DateTimeField("Date Sent", auto_now_add=True)
+    incident_date = models.DateTimeField("Date of Incident*")
+    respondent_name = models.CharField(max_length=50, null=True, blank= True, verbose_name="Respondent Name")
+    location_address = models.CharField(max_length=50, verbose_name="Location Address*")
+    location_description = models.TextField(max_length=500, verbose_name="Location Description*")
+    incident_description = models.TextField(max_length=500, null=True, blank=True, verbose_name="Incident Description")
     # Need to work out how to upload and connect file upload
-    file1 = models.FileField(upload_to="report_files", null=True, blank=True)
-    file2 = models.FileField(upload_to="report_files", null=True, blank=True)
-    file3 = models.FileField(upload_to="report_files", null=True, blank=True)
-    additional_information = models.TextField(max_length=500, null=True, blank=True)
-    expected_completion = models.DateTimeField("Expected time completed", null=True)
+    file1 = models.FileField(upload_to="report_files", null=True, blank=True, verbose_name="File 1")
+    file2 = models.FileField(upload_to="report_files", null=True, blank=True, verbose_name="File 2")
+    file3 = models.FileField(upload_to="report_files", null=True, blank=True, verbose_name="File 3")
+    additional_information = models.TextField(max_length=500, null=True, blank=True, verbose_name="Additional Information")
+    urgency = models.IntegerField(verbose_name="How urgent from 1 to 5?*", default=1)
     complaint_status = models.PositiveSmallIntegerField(
         choices=ComplaintStatus.choices, default=ComplaintStatus.NEW)
-    group = models.ForeignKey(BuildingGroup, on_delete=models.CASCADE, null=True)
+    group = models.ForeignKey(BuildingGroup, on_delete=models.CASCADE, null=True, verbose_name="Building Group*")
+
     def complaint_status_phrase(self):
         status_mapping = {
             self.ComplaintStatus.NEW: "New",
@@ -63,4 +60,23 @@ class Complaint(models.Model):
             self.ComplaintStatus.RESOLVED: "Resolved"
         }
         return status_mapping.get(self.complaint_status, "Unknown")
+
+    def complaint_type_phrase(self):
+        complaint_mapping = {
+            self.ComplaintType.NOISE_COMPLAINT: "Noise Complaint",
+            self.ComplaintType.MESSINESS:  "Messiness",
+            self.ComplaintType.STOLEN_ITEM: "Stolen Item",
+            self.ComplaintType.MAINTENANCE:  "Maintenance",
+            self.ComplaintType.PROPERTY_DAMAGE: "Property Damage",
+            self.ComplaintType.PARKING_LOT: "Parking Lot",
+            self.ComplaintType.LOITERING: "Loitering",
+            self.ComplaintType.OTHER: "Other"
+        }
+        return complaint_mapping.get(self.type_complaint, "Other")
+
+    def delete(self, *args, **kwargs):
+        self.file1.delete(save=False)
+        self.file2.delete(save=False)
+        self.file3.delete(save=False)
+        super().delete(*args, **kwargs)
 

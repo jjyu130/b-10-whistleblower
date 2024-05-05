@@ -9,7 +9,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login Test</title>
+    <title>Admin Home</title>
     <style>
         body, html {
                 margin-top: 0;
@@ -77,20 +77,40 @@
         </div>
         {% if groups %}
         <div class="dashboard-subheader">
-            <h5> Groups </h5>
+            <h5> Open Reports </h5>
         </div>
         {% for group in groups %}
-            <div class="container border rounded-top">
-                {{ group.name }}
-            </div>
-            <div class="container border rounded-bottom" style="height: 16%; overflow-y: scroll;">
-                {% for report in reports %}
-                    {% if report.group == group %}
-                    <li><a href="{% url 'whistleblower:report_view' report.id %}">{{ report.complaint_title }}</a> {{report.type_complaint}}</li>
-                    {% endif %}
-                {% endfor %}
-            </div>
+        <div class="container border rounded-top">
+            <p>{{ group.name }}  | Code: {{ group.pk }}</p>
+        </div>
+        <div class="container border rounded-bottom" style="height: 100px; overflow-y: scroll;">
+            <ul>
+            {% for report in reports %}
+                {% if report.group == group %}
+                <li><a href="{% url 'whistleblower:report_view' report.id %}">{{ report.complaint_title }}</a> | Urgency: {{ report.urgency }}</li>
+                {% endif %}
             {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+        <br>
+        <div class="dashboard-subheader">
+            <h5> Closed Reports </h5>
+        </div>
+        {% for group in groups %}
+        <div class="container border rounded-top">
+            <p>{{ group.name }}  | Code: {{ group.pk }}</p>
+        </div>
+        <div class="container border rounded-bottom" style="height: 100px; overflow-y: scroll;">
+            <ul>
+            {% for report in closed_reports %}
+                {% if report.group == group %}
+                    <li><a href="{% url 'whistleblower:report_view' report.id %}">{{ report.complaint_title }}</a></li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
         {% else %}
             <p>No current groups. Please create a new group and get your residents to join.</p>
         {% endif %}
