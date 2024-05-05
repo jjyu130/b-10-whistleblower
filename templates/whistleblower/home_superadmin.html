@@ -1,0 +1,39 @@
+{% extends "whistleblower/base.html" %}
+{% load socialaccount %}
+{% providers_media_js %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Test</title>
+</head>
+
+<body>
+    {% block content %}
+    <div class="container p-3 mb-2 bg-light text-dark">
+        <legend><h1>Home</h1></legend>
+        <a href="{% url 'whistleblower:create_group_page' %}">Create new building group</a>
+        {% if latest_report_list %}
+            <ul>
+            {% for report in latest_report_list %}
+                <li><a href="{% url 'whistleblower:report_view' report.id %}">{{ report.complaint_title }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No reports available to view.</p>
+        {% endif %}
+    </div>
+
+    <button>
+        <a href="{% url 'whistleblower:logout' %}">Logout</a>
+    </button>
+    <div class=footer>
+        {% include 'whistleblower/footer.html' %}
+    </div>
+    {% endblock content%}
+
+
+</body>
+
+
+</html>

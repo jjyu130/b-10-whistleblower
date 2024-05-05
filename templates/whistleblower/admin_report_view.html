@@ -1,0 +1,101 @@
+{% extends "whistleblower/base.html" %}
+{% block content %}
+<div class="container p-3 mb-2 bg-light text-dark">
+    <body>
+        <p>
+            Reporter: {{report.reporter_first_name}} {{report.reporter_last_name}}<br>
+            Reporter Phone Number: {{report.reporter_phone_number}}<br>
+            Reporter Email: {{report.reporter_email}}<br>
+            Reporter Description: {{reporter.report_description}}<br>
+            Version: {{report.version}}<br>
+            Complaint Title: {{report.complaint_title}}<br>
+            Complaint Type: {{report.complaint_type}}<br>
+            Sent Date: {{report.sent_date}}<br>
+            Incident Date: {{report.incident_date}}<br>
+            Respondent Name: {{report.respondent_name}}<br>
+            Respondent Location: {{report.respondent_location}}<br>
+            Location Address: {{report.location_address}}<br>
+            Location Description: {{report.location_description}}<br>
+            Incident Description: {{report.incident_description}}<br>
+            Additional Info: {{report.additional_information}}<br>
+            Expected Completion: {{report.expected_completion}}<br>
+            Complaint Status: {{report.complaint_status_phrase}}<br>
+        </p>
+
+        {% if report.file1 == "" %}
+        <div>
+            <p> File 1: None </p>
+        </div>
+        {% elif 'jpg' in report.file1 %}
+        <div>
+            <img src="{{ report.file1.url }}" alt="Uploaded Image" style="width: 100%; height: auto;">
+        </div>
+        {% elif 'txt' in report.file1 %}
+        <div>
+             <iframe src="{{ report.file1.url }}" alt="Uploaded Text File"></iframe>
+        </div>
+        {% else %}
+        <div>
+            <embed src ="{{ report.file1.url }}" alt="Uploaded PDF" style="width: 100%; height:100%">
+        </div>
+        {% endif %}
+        {% if report.file2 == "" %}
+        <div>
+            <p> File 2: None </p>
+        </div>
+        {% elif 'jpg' in report.file2 %}
+        <div>
+            <img src="{{ report.file2.url }}" alt="Uploaded Image" style="width: 100%; height: auto;">
+        </div>
+        {% elif 'txt' in report.file2 %}
+        <div>
+            <iframe src="{{ report.file2.url }}" ></iframe>
+        </div>
+        {% else %}
+        <div>
+            <embed src = "{{ report.file2.url }}" alt="Uploaded PDF" style="width: 100%; height:100%">
+        </div>
+        {% endif %}
+        {% if report.file3 == "" %}
+        <div>
+            <p> File 3: None </p>
+        </div>
+        {% elif 'jpg' in report.file3 %}
+        <div>
+            <img src="{{ report.file3.url }}" alt="Uploaded Image" style="width: 100%; height: auto;">
+        </div>
+        {% elif 'txt' in report.file3 %}
+        <div>
+            <iframe src="{{ report.file3.url }}" ></iframe>
+        </div>
+        {% else %}
+        <div>
+            <embed src = "{{ report.file3.url }}" alt="Uploaded PDF" style="width: 100%; height:100%">
+        </div>
+        {% endif %}
+        {% if is_admin %}
+        <form method="post" action="{% url 'whistleblower:mark_as_resolved' report.id %}">
+            {% csrf_token %}
+            <div>
+                <textarea id="resolution_notes" name="resolution_notes" rows="5" cols="50"></textarea>
+            </div>
+            <button type="submit">
+                Mark as Resolved
+            </button>
+        </form>
+        {% else %}
+        <h5>Admin Notes</h5>
+        <p>{{ report.resolution_notes }}</p>
+        <p>No notes available at this time.</p>
+
+        {% endif %}
+
+        <button>
+            <a href="{% url 'whistleblower:home' %}">Back</a>
+        </button>
+    </body>
+</div>
+<div class=footer>
+    {% include 'whistleblower/footer.html' %}
+</div>
+{% endblock content%}

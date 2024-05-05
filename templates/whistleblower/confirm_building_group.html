@@ -1,0 +1,14 @@
+{% extends "whistleblower/base.html" %}
+
+{% block content %}
+<div class="container mb-3">
+    <p>
+        Your building code is {{ group_id }}. <br>
+        Share this with your residents to allow them to join the building and submit reports. <br>
+        <a href="{% url 'whistleblower:home_admin' %}">Return to admin home.</a>
+    </p>
+</div>
+<div class=footer>
+    {% include 'whistleblower/footer.html' %}
+</div>
+{% endblock content %}
